@@ -111,73 +111,13 @@
 
         ul { list-style-type: none; }
 
-        /* Fancy Music Player */
-        .player-ui {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(255,255,255,0.7);
-            padding: 15px;
-            border-radius: 50px;
-            margin-top: 15px;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .vinyl {
-            width: 50px;
-            height: 50px;
-            background: #222;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 3px solid #ff4757;
-        }
-
-        .vinyl.playing {
-            animation: spin 3s linear infinite;
-        }
-
-        .vinyl::after {
-            content: '';
-            width: 15px;
-            height: 15px;
-            background: #ff4757;
-            border-radius: 50%;
-        }
-
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .play-btn {
-            background: #ff4757;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4);
-        }
-        .play-btn:hover { transform: scale(1.1); }
-
-        .track-info {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #333;
-            flex-grow: 1;
-        }
-
-        /* Action Button */
-        .momo-btn {
+        /* General Buttons */
+        .primary-btn {
             background: linear-gradient(45deg, #ff6b81, #ff4757);
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
+            padding: 15px 30px;
+            font-size: 1.1rem;
             font-weight: 600;
             border-radius: 50px;
             cursor: pointer;
@@ -186,20 +126,101 @@
             font-family: 'Outfit', sans-serif;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
+            width: 100%;
+            margin-top: 15px;
         }
 
-        .momo-btn:hover {
+        .primary-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 15px 25px rgba(255, 71, 87, 0.4);
         }
 
-        /* Fixed Falling Emoji CSS (100% Working) */
+        .momo-btn {
+            width: auto;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+        }
+
+        /* --- VIDEO MODAL (POPUP) CSS --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 100000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: relative;
+            background: #fff;
+            padding: 10px;
+            border-radius: 20px;
+            max-width: 90%;
+            max-height: 90vh;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: #ff4757;
+            color: white;
+            border: 3px solid white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            transition: 0.2s;
+            z-index: 100001;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        video {
+            width: 100%;
+            max-width: 800px;
+            max-height: 80vh;
+            border-radius: 15px;
+            outline: none;
+            display: block;
+        }
+
+        /* Falling Emoji CSS */
         .falling-emoji {
             position: fixed;
-            top: -100px; /* Start above screen */
-            z-index: 9999; /* Always on top */
-            pointer-events: none; /* Won't block clicks */
+            top: -100px;
+            z-index: 9999;
+            pointer-events: none;
             animation: fall linear forwards;
         }
 
@@ -216,9 +237,7 @@
 </head>
 <body>
 
-    <!-- Hidden Audio Tag -->
-    <audio id="bdayAudio" src="audio.mp3" loop preload="auto"></audio>
-
+    <!-- MAIN DASHBOARD -->
     <div class="glass-container">
         <h1>Happy Birthday Dishuuu! 🎂</h1>
         <p class="subtitle">Wishing the sweetest, most genuine & stress-free year to our future Doctor Sahiba! ✨</p>
@@ -235,57 +254,63 @@
                 </ul>
             </div>
 
-            <!-- Real Music Card -->
+            <!-- Video Trigger Card -->
             <div class="glass-card">
-                <h3><i class="fa-solid fa-music"></i> The TG Vibe Check</h3>
-                <p>Song kaise play ho rha bina bot ke? Aise! 👇</p>
-                
-                <div class="player-ui">
-                    <div class="vinyl" id="vinyl"></div>
-                    <button class="play-btn" id="playBtn"><i class="fa-solid fa-play"></i></button>
-                    <div class="track-info">
-                        <span id="trackName">Dishuuu's B'day Track 🎵</span>
-                        <div style="width: 100%; height: 5px; background: #ddd; margin-top: 5px; border-radius: 3px; overflow: hidden;">
-                            <div id="progressBar" style="width: 0%; height: 100%; background: #ff4757;"></div>
-                        </div>
-                    </div>
-                </div>
+                <h3><i class="fa-solid fa-film"></i> The TG Vibe Check</h3>
+                <p>Song/Video kaise play ho rha bina bot ke? Aise! 👇</p>
+                <button class="primary-btn" id="openVideoBtn">
+                    <i class="fa-solid fa-play"></i> Watch Birthday Surprise
+                </button>
             </div>
         </div>
 
-        <button class="momo-btn" id="treatBtn">
+        <button class="primary-btn momo-btn" id="treatBtn">
             <i class="fa-solid fa-gift"></i> Claim Your Birthday Treat!
         </button>
     </div>
 
+    <!-- 🎬 VIDEO POPUP (MODAL) 🎬 -->
+    <div class="modal-overlay" id="videoModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeModal"><i class="fa-solid fa-times"></i></button>
+            
+            <!-- Replace 'video.mp4' with your actual file name if different -->
+            <video id="bdayVideo" controls playsinline>
+                <source src="video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
     <script>
-        // --- REAL AUDIO PLAYER LOGIC ---
-        const audio = document.getElementById('bdayAudio');
-        const playBtn = document.getElementById('playBtn');
-        const vinyl = document.getElementById('vinyl');
-        const progressBar = document.getElementById('progressBar');
+        // --- VIDEO POPUP LOGIC ---
+        const videoModal = document.getElementById('videoModal');
+        const openVideoBtn = document.getElementById('openVideoBtn');
+        const closeModalBtn = document.getElementById('closeModal');
+        const bdayVideo = document.getElementById('bdayVideo');
 
-        playBtn.addEventListener('click', () => {
-            if (audio.paused) {
-                audio.play();
-                playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-                vinyl.classList.add('playing');
-            } else {
-                audio.pause();
-                playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-                vinyl.classList.remove('playing');
+        // Open Modal & Play Video
+        openVideoBtn.addEventListener('click', () => {
+            videoModal.classList.add('active');
+            bdayVideo.play();
+        });
+
+        // Close Modal & Pause Video
+        function closeVideo() {
+            videoModal.classList.remove('active');
+            bdayVideo.pause();
+        }
+
+        closeModalBtn.addEventListener('click', closeVideo);
+
+        // Close if clicked outside the video box
+        videoModal.addEventListener('click', (e) => {
+            if (e.target === videoModal) {
+                closeVideo();
             }
         });
 
-        // Update progress bar as song plays
-        audio.addEventListener('timeupdate', () => {
-            if (audio.duration) {
-                const progressPercent = (audio.currentTime / audio.duration) * 100;
-                progressBar.style.width = progressPercent + '%';
-            }
-        });
-
-        // --- MOMO & CONFETTI RAIN LOGIC (FIXED) ---
+        // --- MOMO & CONFETTI RAIN LOGIC ---
         document.getElementById('treatBtn').addEventListener('click', function() {
             this.innerHTML = "Momos ki Baarishhh! 🥟🌧️";
             
@@ -314,251 +339,24 @@
                 }
             }());
 
-            // Trigger Falling Emojis (Guaranteed to work)
-            const emojis = ['🥟', '🥟', '✨', '💖', '👩‍⚕️', '🥟']; // Extra momos added to array
-            for(let i = 0; i < 50; i++) { // Increased count to 50
+            // Trigger Falling Emojis
+            const emojis = ['🥟', '🥟', '✨', '💖', '👩‍⚕️', '🥟'];
+            for(let i = 0; i < 50; i++) {
                 setTimeout(() => {
                     const el = document.createElement('div');
                     el.classList.add('falling-emoji');
                     el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
                     
-                    // Random Size (20px to 45px)
                     el.style.fontSize = (Math.random() * 25 + 20) + 'px';
-                    // Random Horizontal Position
                     el.style.left = Math.random() * 100 + 'vw';
-                    // Random Fall Speed (2s to 5s)
                     el.style.animationDuration = (Math.random() * 3 + 2) + 's';
                     
                     document.body.appendChild(el);
 
-                    // Clean up DOM after animation finishes
                     setTimeout(() => el.remove(), 6000);
-                }, i * 100); // Delay between each drop
-            }
-        });
-    </script>
-</body>
-</html>
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .glass-card p, .glass-card li {
-            font-size: 1rem;
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 8px;
-        }
-
-        ul {
-            list-style-type: none;
-        }
-
-        /* Fancy Music Player */
-        .player-ui {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(255,255,255,0.5);
-            padding: 10px 15px;
-            border-radius: 50px;
-            margin-top: 15px;
-        }
-
-        .vinyl {
-            width: 50px;
-            height: 50px;
-            background: #222;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 3px solid #ff4757;
-            transition: transform 0.2s;
-        }
-
-        .vinyl.playing {
-            animation: spin 3s linear infinite;
-        }
-
-        .vinyl::after {
-            content: '';
-            width: 15px;
-            height: 15px;
-            background: #ff4757;
-            border-radius: 50%;
-        }
-
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .play-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #ff4757;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .play-btn:hover { transform: scale(1.1); }
-
-        .track-info {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #333;
-        }
-
-        /* Action Button */
-        .momo-btn {
-            background: linear-gradient(45deg, #ff6b81, #ff4757);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3);
-            transition: all 0.3s;
-            font-family: 'Outfit', sans-serif;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .momo-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 25px rgba(255, 71, 87, 0.4);
-        }
-
-        /* Falling Emoji CSS */
-        .falling-emoji {
-            position: fixed;
-            top: -50px;
-            z-index: 5;
-            animation: fall linear forwards;
-        }
-
-        @keyframes fall {
-            to { transform: translateY(110vh) rotate(360deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            h1 { font-size: 2.5rem; }
-            .glass-container { padding: 25px; }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="glass-container">
-        <h1>Happy Birthday Dishuuu! 🎂</h1>
-        <p class="subtitle">Wishing the sweetest, most genuine & stress-free year to our future Doctor Sahiba! ✨</p>
-
-        <div class="grid-layout">
-            <!-- Prescription Card -->
-            <div class="glass-card">
-                <h3><i class="fa-solid fa-stethoscope"></i> Official Prescription</h3>
-                <ul>
-                    <li>🩺 <b>Patient:</b> Dishuuu</li>
-                    <li>🧠 <b>Diagnosis:</b> Severe limits of NEET Trauma</li>
-                    <li>🥟 <b>Cure:</b> ₹40 waale Steam Momos (Stat!)</li>
-                    <li>🚫 <b>Avoid:</b> Overthinking & Garmi waali Chai</li>
-                </ul>
-            </div>
-
-            <!-- Music Card -->
-            <div class="glass-card">
-                <h3><i class="fa-solid fa-music"></i> The TG Vibe Check</h3>
-                <p>Song kaise play ho rha bina bot ke? Aise! 👇</p>
-                
-                <div class="player-ui">
-                    <div class="vinyl" id="vinyl"></div>
-                    <button class="play-btn" id="playBtn"><i class="fa-solid fa-play"></i></button>
-                    <div class="track-info">
-                        <span id="trackName">Ghazal x Party Mix</span>
-                        <div style="width: 100%; height: 4px; background: #ddd; margin-top: 5px; border-radius: 2px;">
-                            <div style="width: 40%; height: 100%; background: #ff4757; border-radius: 2px;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <button class="momo-btn" id="treatBtn">
-            <i class="fa-solid fa-gift"></i> Claim Your Birthday Treat!
-        </button>
-    </div>
-
-    <script>
-        // Fake Music Player Logic
-        const playBtn = document.getElementById('playBtn');
-        const vinyl = document.getElementById('vinyl');
-        let isPlaying = false;
-
-        playBtn.addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            if (isPlaying) {
-                playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-                vinyl.classList.add('playing');
-            } else {
-                playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-                vinyl.classList.remove('playing');
-            }
-        });
-
-        // Momo & Confetti Rain Logic
-        document.getElementById('treatBtn').addEventListener('click', function() {
-            this.innerHTML = "Momos ki Baarishhh! 🥟🌧️";
-            
-            // Trigger Confetti
-            var duration = 3000;
-            var end = Date.now() + duration;
-
-            (function frame() {
-                confetti({
-                    particleCount: 5,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 },
-                    colors: ['#ff9a9e', '#fecfef', '#a1c4fd']
-                });
-                confetti({
-                    particleCount: 5,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 },
-                    colors: ['#ff9a9e', '#fecfef', '#a1c4fd']
-                });
-
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
-            }());
-
-            // Trigger Falling Momos
-            const emojis = ['🥟', '✨', '💖', '👩‍⚕️'];
-            for(let i = 0; i < 40; i++) {
-                setTimeout(() => {
-                    const el = document.createElement('div');
-                    el.classList.add('falling-emoji');
-                    el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-                    
-                    // Random Size & Position
-                    el.style.fontSize = (Math.random() * 20 + 20) + 'px';
-                    el.style.left = Math.random() * 100 + 'vw';
-                    el.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                    
-                    document.body.appendChild(el);
-
-                    // Clean up DOM
-                    setTimeout(() => el.remove(), 5000);
                 }, i * 100);
             }
         });
     </script>
 </body>
 </html>
-
